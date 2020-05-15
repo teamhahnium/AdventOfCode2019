@@ -8,5 +8,9 @@ namespace Hahnium.AdventOfCode.Calendar
     {
         string PartA(string input);
         string PartB(string input);
+        string FunctionalPartA(string input);
+        string FunctionalPartB(string input);
+        string FastPartA(string input);
+        string FastPartB(string input);
     }
 }

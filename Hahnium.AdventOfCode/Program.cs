@@ -1,5 +1,6 @@
 ﻿using Hahnium.AdventOfCode.Calendar;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -36,18 +37,38 @@ namespace Hahnium.AdventOfCode
             var input = File.ReadAllText($"Calendar/{dayId}/Input.txt");
 
             await Task.WhenAll(
-                RunPart(day.PartA, input, dayNumber, 7),
-                RunPart(day.PartB, input, dayNumber, (Console.WindowWidth - 7) / 2));
+                RunPart(day.PartA, day.FunctionalPartA, day.FastPartA, input, dayNumber, 7),
+                RunPart(day.PartB, day.FunctionalPartB, day.FastPartB, input, dayNumber, (Console.WindowWidth - 7) / 2));
         }
 
-        private static async Task RunPart(Func<string, string> partFunction, string input, int top, int left)
+        private static async Task RunPart(
+            Func<string, string> imperative, 
+            Func<string, string> functional, 
+            Func<string, string> fast, 
+            string input, int top, int left)
         {
-            var result = await Task.Factory.StartNew(() => partFunction(input));
+            var result = await await Task.WhenAny(
+                RunPart(imperative, input, 'I'),
+                RunPart(functional, input, 'F'),
+                RunPart(fast, input, 'P'));
+
             lock (ConsoleSync)
             {
                 Console.SetCursorPosition(left, top);
-                Console.Write(result);
+                Console.Write($"{result.Type}:{result.Duration.TotalMilliseconds}|{result.Result}");
             }
         }
+
+        private static Task<(string Result, TimeSpan Duration, char Type)> RunPart(
+            Func<string, string> part,
+            string input,
+            char type) =>
+            Task.Factory.StartNew(() =>
+        {
+            var timer = Stopwatch.StartNew();
+            var result = part(input);
+            timer.Stop();
+            return (result, timer.Elapsed, type);
+        });
     }
 }
