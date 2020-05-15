@@ -16,7 +16,9 @@ namespace Hahnium.AdventOfCode.Calendar.Tests
 
         public override IEnumerable<(string Input, string Expected)> PartBTests => new[]
         {
-            ("", ""),
+            ("12", "2"),
+            ("1969", "966"),
+            ("100756", "50346"),
         };
     }
 }
