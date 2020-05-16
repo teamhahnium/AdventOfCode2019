@@ -16,13 +16,26 @@ namespace Hahnium.AdventOfCode
 
         static async Task Main(string[] args)
         {
+            Console.ResetColor();
+            Console.Clear();
             var namespaceParser = new Regex(@"Day(?<DayId>\d+)");
             var discoveredDays =
                 from exportedType in typeof(IDay).Assembly.GetExportedTypes()
                 where exportedType.GetInterfaces().Any(@interface => @interface == typeof(IDay)) && !exportedType.IsAbstract
                 let dayId = int.Parse(namespaceParser.Match(exportedType.Namespace).Groups["DayId"].Value)
-                select RunDay(dayId, (IDay)Activator.CreateInstance(exportedType));
-            await Task.WhenAll(discoveredDays);
+                select (dayId, exportedType);
+
+            await Task.WhenAll(discoveredDays.Select(o =>
+                RunDay(o.dayId, (IDay)Activator.CreateInstance(o.exportedType))));
+
+            // 2nd run to eliminate JIT issues.
+            await Task.WhenAll(discoveredDays.Select(o =>
+                RunDay(o.dayId, (IDay)Activator.CreateInstance(o.exportedType))));
+
+            lock (ConsoleSync)
+            {
+                Console.SetCursorPosition(0, discoveredDays.Count() + 1);
+            }
         }
 
         private static async Task RunDay(int dayNumber, IDay day)
@@ -30,28 +43,29 @@ namespace Hahnium.AdventOfCode
             string dayId = $"Day{dayNumber:00}";
             lock (ConsoleSync)
             {
-                Console.CursorTop = dayNumber;
+                Console.SetCursorPosition(0, dayNumber);
                 Console.Write(dayId);
             }
 
             var input = File.ReadAllText($"Calendar/{dayId}/Input.txt");
+            day.Parse(input);
 
             await Task.WhenAll(
-                RunPart(day.PartA, day.FunctionalPartA, day.FastPartA, input, dayNumber, 7),
-                RunPart(day.PartB, day.FunctionalPartB, day.FastPartB, input, dayNumber, (Console.WindowWidth - 7) / 2));
+                RunPart(day.PartA, day.FunctionalPartA, day.FastPartA, dayNumber, 7),
+                RunPart(day.PartB, day.FunctionalPartB, day.FastPartB, dayNumber, (Console.WindowWidth - 7) / 2));
         }
 
         private static async Task RunPart(
-            Func<string, string> imperative,
-            Func<string, string> functional,
-            Func<string, string> fast,
-            string input, int top, int left)
+            Func<object> imperative,
+            Func<object> functional,
+            Func<object> fast,
+            int top, int left)
         {
             var pending = new HashSet<Task<(string Result, TimeSpan Duration, char Type)>>
             {
-                RunPart(imperative, input, 'I'),
-                RunPart(functional, input, 'F'),
-                RunPart(fast, input, 'P')
+                RunPart(imperative, 'I'),
+                RunPart(functional, 'F'),
+                RunPart(fast, 'P')
             };
 
             var completed = new SortedSet<(string Result, TimeSpan Duration, char Type)>(
@@ -71,7 +85,7 @@ namespace Hahnium.AdventOfCode
 
                     if (completed.Any(o => o.Result != null))
                     {
-                        fastest = completed.Where(o => o.Result != null).MaxBy(o => o.Duration).First();
+                        fastest = completed.Where(o => o.Result != null).MinBy(o => o.Duration).First();
                     }
                     else
                     {
@@ -99,11 +113,19 @@ namespace Hahnium.AdventOfCode
                         Console.Write(part.Type);
                         Console.ResetColor();
 
-                        if (fastest != default)
+                        if (!completed.All(o => o.Result == fastest.Result || o.Result == null))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.SetCursorPosition(left + 4, top);
+                            Console.Write($"ERROR!!");
+                            Console.ResetColor();
+                        }
+                        else if (fastest != default)
                         {
                             Console.SetCursorPosition(left + 4, top);
-                            Console.Write($"{fastest.Result} [{fastest.Duration.TotalMilliseconds}]");
+                            Console.Write($"[{fastest.Duration.TotalMilliseconds}] {fastest.Result}");
                         }
+
 
                         partId++;
                     }
@@ -112,8 +134,7 @@ namespace Hahnium.AdventOfCode
         }
 
         private static Task<(string Result, TimeSpan Duration, char Type)> RunPart(
-            Func<string, string> part,
-            string input,
+            Func<object> part,
             char type) =>
             Task.Factory.StartNew(() =>
         {
@@ -122,7 +143,7 @@ namespace Hahnium.AdventOfCode
 
             try
             {
-                result = part(input);
+                result = part().ToString();
             }
             catch
             {

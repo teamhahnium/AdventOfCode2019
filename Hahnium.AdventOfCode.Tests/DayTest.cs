@@ -12,17 +12,25 @@ namespace Hahnium.AdventOfCode.Tests
         public abstract IEnumerable<(string Input, string Expected)> PartATests { get; }
         public abstract IEnumerable<(string Input, string Expected)> PartBTests { get; }
 
-        public string RunPartA(string input) => new TDay().PartA(input);
+        public string RunPartA(string input) => CreateDay(input).PartA().ToString();
 
-        public string RunPartB(string input) => new TDay().PartB(input);
+        public string RunPartB(string input) => CreateDay(input).PartB().ToString();
 
-        public string RunFunctionalPartA(string input) => new TDay().FunctionalPartA(input);
+        public string RunFunctionalPartA(string input) => CreateDay(input).FunctionalPartA().ToString();
 
-        public string RunFunctionalPartB(string input) => new TDay().FunctionalPartB(input);
+        public string RunFunctionalPartB(string input) => CreateDay(input).FunctionalPartB().ToString();
 
-        public string RunFastPartA(string input) => new TDay().FastPartA(input);
+        public string RunFastPartA(string input) => CreateDay(input).FastPartA().ToString();
 
-        public string RunFastPartB(string input) => new TDay().FastPartB(input);
+        public string RunFastPartB(string input) => CreateDay(input).FastPartB().ToString();
+
+        private TDay CreateDay(string input)
+        {
+            var day = new TDay();
+            day.IsTestMode = true;
+            day.Parse(input);
+            return day;
+        }
 
         public static IEnumerable<object[]> PartATestData => new TTest().PartATests.Select(o => new object[] { o.Input, o.Expected });
         public static IEnumerable<object[]> PartBTestData => new TTest().PartBTests.Select(o => new object[] { o.Input, o.Expected });
@@ -40,6 +48,7 @@ namespace Hahnium.AdventOfCode.Tests
         {
             Assert.Equal(expected, new TTest().RunPartB(input));
         }
+
         [Theory]
         [MemberData(nameof(PartATestData))]
         public void FunctionalPartA(string input, string expected)
@@ -53,6 +62,7 @@ namespace Hahnium.AdventOfCode.Tests
         {
             Assert.Equal(expected, new TTest().RunFunctionalPartB(input));
         }
+
         [Theory]
         [MemberData(nameof(PartATestData))]
         public void FastPartA(string input, string expected)
