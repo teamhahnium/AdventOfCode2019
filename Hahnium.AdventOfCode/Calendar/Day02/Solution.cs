@@ -46,15 +46,12 @@ namespace Hahnium.AdventOfCode.Calendar.Day02
             throw new InvalidOperationException();
         }
 
-        private int Execute(int noun, int verb)
+        public int Execute(int noun, int verb)
         {
             var ram = this.imperativeInput.ToArray();
 
-            if (!this.IsTestMode)
-            {
-                ram[1] = noun;
-                ram[2] = verb;
-            }
+            ram[1] = noun;
+            ram[2] = verb;
 
             int p = 0;
             int opcode;
@@ -80,36 +77,19 @@ namespace Hahnium.AdventOfCode.Calendar.Day02
             return ram[0];
         }
 
-
-        private ImmutableArray<int> InitRam()
-        {
-            var ram = this.functionalInput.ToImmutableArray();
-
-            if (!this.IsTestMode)
-            {
-                ram = ram.SetItem(1, 12).SetItem(2, 2);
-            }
-
-            return ram;
-        }
-
         public override object FunctionalPartA() => FunctionalExecute(12, 2);
 
         public override object FunctionalPartB() =>
             (from noun in Enumerable.Range(0, 100)
-            from verb in Enumerable.Range(0, 100)
-            let result = FunctionalExecute(noun, verb)
-            where result == TargetOutput
-            select 100 * noun + verb).Single();
+             from verb in Enumerable.Range(0, 100)
+             let result = FunctionalExecute(noun, verb)
+             where result == TargetOutput
+             select 100 * noun + verb).Single();
 
         private ImmutableArray<int> InitRam(int noun, int verb)
         {
             var ram = this.functionalInput.ToImmutableArray();
-
-            if (!this.IsTestMode)
-            {
-                ram = ram.SetItem(1, noun).SetItem(2, verb);
-            }
+            ram = ram.SetItem(1, noun).SetItem(2, verb);
 
             return ram;
         }
@@ -186,11 +166,8 @@ namespace Hahnium.AdventOfCode.Calendar.Day02
             this.pointerInput.CopyTo(ram);
             using var handle = ram.Pin();
             var address = (int*)handle.Pointer;
-            if (!this.IsTestMode)
-            {
-                address[1] = noun;
-                address[2] = verb;
-            }
+            address[1] = noun;
+            address[2] = verb;
             var p = address;
             int opcode;
 

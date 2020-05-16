@@ -27,7 +27,6 @@ namespace Hahnium.AdventOfCode.Tests
         private TDay CreateDay(string input)
         {
             var day = new TDay();
-            day.IsTestMode = true;
             day.Parse(input);
             return day;
         }

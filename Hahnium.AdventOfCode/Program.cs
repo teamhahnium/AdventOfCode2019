@@ -29,12 +29,15 @@ namespace Hahnium.AdventOfCode
                 RunDay(o.dayId, (IDay)Activator.CreateInstance(o.exportedType))));
 
             // 2nd run to eliminate JIT issues.
+            var timer = Stopwatch.StartNew();
             await Task.WhenAll(discoveredDays.Select(o =>
                 RunDay(o.dayId, (IDay)Activator.CreateInstance(o.exportedType))));
+            timer.Stop();
 
             lock (ConsoleSync)
             {
                 Console.SetCursorPosition(0, discoveredDays.Count() + 1);
+                Console.WriteLine($"Total execution time: {timer.Elapsed}");
             }
         }
 
@@ -123,9 +126,8 @@ namespace Hahnium.AdventOfCode
                         else if (fastest != default)
                         {
                             Console.SetCursorPosition(left + 4, top);
-                            Console.Write($"[{fastest.Duration.TotalMilliseconds}] {fastest.Result}");
+                            Console.Write($"[{fastest.Duration.TotalMilliseconds:0.0000}] {fastest.Result}");
                         }
-
 
                         partId++;
                     }

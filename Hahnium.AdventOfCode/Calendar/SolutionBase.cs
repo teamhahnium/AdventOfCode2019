@@ -21,8 +21,6 @@ namespace Hahnium.AdventOfCode.Calendar
             this.pointerParser = pointerParser;
         }
 
-        public bool IsTestMode { get; set; } = false;
-
         public void Parse(string input)
         {
             imperativeInput = imperativeParser(input);

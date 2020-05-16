@@ -2,7 +2,6 @@
 {
     public interface IDay
     {
-        bool IsTestMode { get; set; }
         void Parse(string input);
         object PartA();
         object PartB();
