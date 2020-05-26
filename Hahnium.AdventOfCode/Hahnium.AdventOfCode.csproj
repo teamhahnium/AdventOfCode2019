@@ -11,10 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Calendar\Day01\Input.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Calendar\Day02\Input.txt">
+    <None Update="**\Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
