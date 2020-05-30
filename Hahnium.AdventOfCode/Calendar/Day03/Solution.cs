@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Data.Common;
 using System.Linq;
 using System.Numerics;
 
@@ -54,17 +56,7 @@ namespace Hahnium.AdventOfCode.Calendar.Day03
                     {
                         if (intersection != Point.Origin)
                         {
-                            int intersectionLength;
-
-                            if (segment.IsHorizontal)
-                            {
-                                intersectionLength = Math.Abs(segment.Start - intersection.X) + Math.Abs(checkSegment.Start - intersection.Y);
-                            }
-                            else
-                            {
-                                intersectionLength = Math.Abs(segment.Start - intersection.Y) + Math.Abs(checkSegment.Start - intersection.X);
-                            }
-
+                            int intersectionLength = (segment.StartPoint - intersection).ManhattanDistance + (checkSegment.StartPoint - intersection).ManhattanDistance;
                             minSteps = Math.Min(minSteps, lineASteps + lineBSteps + intersectionLength);
                         }
                     }
@@ -87,10 +79,26 @@ namespace Hahnium.AdventOfCode.Calendar.Day03
              where intersects.Intersects && intersects.intersection != Point.Origin
              select intersects.intersection.ManhattanDistance).Min();
 
-        public override object FunctionalPartB() => throw new NotImplementedException();
+        public override object FunctionalPartB() =>
+            (from intersection in
+                (from segment in this.functionalInput.First()
+                 from checkSegment in this.functionalInput.Last()
+                 let intersects = (DoesIntersect: segment.Intersects(checkSegment, out Point intersection), intersection)
+                 where intersects.DoesIntersect && intersects.intersection != Point.Origin
+                 select (intersects.intersection, Left: segment.StartPoint, Right: checkSegment.StartPoint))
+             let leftPath =
+                this.functionalInput.First()
+                    .TakeWhile(o => o.StartPoint != intersection.Left)
+                    .Sum(o => o.Length) + (intersection.Left - intersection.intersection).ManhattanDistance
+             let rightPath =
+                this.functionalInput.Last()
+                    .TakeWhile(o => o.StartPoint != intersection.Right)
+                    .Sum(o => o.Length) + (intersection.Right - intersection.intersection).ManhattanDistance
+             select leftPath + rightPath).Min();
 
+        // Don't have anything faster for this yet
         public override object FastPartA() => PartA();
 
-        public override object FastPartB() => throw new NotImplementedException();
+        public override object FastPartB() => PartB();
     }
 }

@@ -51,7 +51,7 @@ namespace Hahnium.AdventOfCode.Calendar.Day02
 
         public int Execute(int noun, int verb)
         {
-            var ram = this.imperativeInput;
+            var ram = (int[])this.imperativeInput.Clone();
 
             ram[1] = noun;
             ram[2] = verb;
