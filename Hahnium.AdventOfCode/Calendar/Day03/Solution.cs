@@ -1,10 +1,6 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Data.Common;
 using System.Linq;
-using System.Numerics;
 
 namespace Hahnium.AdventOfCode.Calendar.Day03
 {
@@ -28,6 +24,11 @@ namespace Hahnium.AdventOfCode.Calendar.Day03
             {
                 foreach (var checkSegment in this.imperativeInput[1])
                 {
+                    if(segment.IsHorizontal == checkSegment.IsHorizontal)
+                    {
+                        continue;
+                    }
+
                     if (segment.Intersects(checkSegment, out Point intersection))
                     {
                         if (intersection != Point.Origin)
@@ -52,7 +53,7 @@ namespace Hahnium.AdventOfCode.Calendar.Day03
 
                 foreach (var checkSegment in this.imperativeInput[1])
                 {
-                    if (segment.Intersects(checkSegment, out Point intersection))
+                    if (segment.IsHorizontal != checkSegment.IsHorizontal && segment.Intersects(checkSegment, out Point intersection))
                     {
                         if (intersection != Point.Origin)
                         {

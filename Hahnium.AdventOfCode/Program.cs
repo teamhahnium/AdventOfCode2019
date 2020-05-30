@@ -126,7 +126,7 @@ namespace Hahnium.AdventOfCode
                         else if (fastest != default)
                         {
                             Console.SetCursorPosition(left + 4, top);
-                            Console.Write($"[{fastest.Duration.TotalMilliseconds:0.0000}] {fastest.Result}");
+                            Console.Write($"[{fastest.Duration.TotalMilliseconds:0.0000}] {fastest.Result}    ");
                         }
 
                         partId++;
