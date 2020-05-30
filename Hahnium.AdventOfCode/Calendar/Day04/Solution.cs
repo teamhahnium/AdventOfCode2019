@@ -5,8 +5,6 @@ namespace Hahnium.AdventOfCode.Calendar.Day04
 {
     public class Solution : SolutionBase<(int Start, int End), (int Start, int End), (int Start, int End)>
     {
-        private const int TargetOutput = 19690720;
-
         private static (int Start, int End) ParseRange(string input)
         {
             var tokens = input.Split('-');

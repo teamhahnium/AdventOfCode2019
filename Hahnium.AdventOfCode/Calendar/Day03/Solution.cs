@@ -6,8 +6,6 @@ namespace Hahnium.AdventOfCode.Calendar.Day03
 {
     public class Solution : SolutionBase<IList<IList<OrthoLine>>, IEnumerable<IEnumerable<OrthoLine>>, IEnumerable<IEnumerable<OrthoLine>>>
     {
-        private const int TargetOutput = 19690720;
-
         public Solution()
             : base(
                   Parsers.Lines(Parsers.Array().Direction().ContinuousLine().ToList()).ToList(),
