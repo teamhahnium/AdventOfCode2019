@@ -8,7 +8,10 @@ namespace Hahnium.AdventOfCode.Calendar.Day01
     public class Solution : SolutionBase<IEnumerable<int>, IEnumerable<int>, ReadOnlyMemory<int>>
     {
         public Solution()
-            : base(Parsers.Lines().Int(), Parsers.Lines().Int(), Parsers.Lines().Int().Memory())
+            : base(
+                  Parsers.Lines().Int(),
+                  Parsers.Lines().Int(),
+                  Parsers.Lines().Int().Memory())
         {
         }
 
@@ -102,7 +105,7 @@ namespace Hahnium.AdventOfCode.Calendar.Day01
                     inputSpan.CopyTo(tempSpan);
                     inputSpan = tempSpan;
                 }
-                
+
                 var moduleMass = new Vector<int>(inputSpan);
                 var moduleFuel = moduleMass / three - two;
 

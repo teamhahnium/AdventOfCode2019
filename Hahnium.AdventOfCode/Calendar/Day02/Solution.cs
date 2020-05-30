@@ -5,12 +5,15 @@ using System.Linq;
 
 namespace Hahnium.AdventOfCode.Calendar.Day02
 {
-    public class Solution : SolutionBase<IEnumerable<int>, IEnumerable<int>, ReadOnlyMemory<int>>
+    public class Solution : SolutionBase<int[], IEnumerable<int>, ReadOnlyMemory<int>>
     {
         private const int TargetOutput = 19690720;
 
         public Solution()
-            : base(Parsers.Array().Int(), Parsers.Array().Int(), Parsers.Array().Int().Memory())
+            : base(
+                  Parsers.Array().Int().ToArray(),
+                  Parsers.Array().Int(),
+                  Parsers.Array().Int().Memory())
         {
         }
 
@@ -48,7 +51,7 @@ namespace Hahnium.AdventOfCode.Calendar.Day02
 
         public int Execute(int noun, int verb)
         {
-            var ram = this.imperativeInput.ToArray();
+            var ram = (int[])this.imperativeInput.Clone();
 
             ram[1] = noun;
             ram[2] = verb;
